@@ -1,0 +1,34 @@
+FROM arm32v7/debian:latest
+MAINTAINER docker@intrepid.de
+
+env MOSQUITTOVERSION <<MOSQUITTOVERSION>>
+env USERID 9002
+
+# based on https://github.com/fstehle/docker-rpi-mosquitto
+
+COPY push-mqtt.sh /opt/push-mqtt.sh
+
+RUN passwd -l root ; \
+    apt-get update && \
+    apt-get install -yq bash apt-transport-https wget gnupg && \
+    apt-get install -yq openssl bc build-essential libssl-dev libc-ares-dev libwebsockets-dev && \
+    mkdir -p /usr/src ; \
+    cd /usr/src && \
+    wget https://mosquitto.org/files/source/mosquitto-${MOSQUITTOVERSION}.tar.gz && \
+    tar xzvf mosquitto-${MOSQUITTOVERSION}.tar.gz && \
+    cd /usr/src/mosquitto-${MOSQUITTOVERSION}/lib && \
+    make WITH_DOCS=no&& \
+    make install && \
+    ldconfig && \
+    cd /usr/src/mosquitto-${MOSQUITTOVERSION}/client && \
+    make WITH_DOCS=no&& \
+    make install && \
+    cd / && \
+    apt-get remove -yq build-essential libssl-dev libc-ares-dev libwebsockets-dev wget && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/src/* && \
+    chmod 755 /opt/push-mqtt.sh
+
+# Run the command on container startup
+CMD /opt/push-mqtt.sh
+
