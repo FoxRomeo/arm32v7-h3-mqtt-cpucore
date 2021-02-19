@@ -2,3 +2,7 @@ local_conf.h
 Dockerfile
 Build.sh
 env.txt
+Jenkinsfile
+action.sh
+get_version.sh
+
