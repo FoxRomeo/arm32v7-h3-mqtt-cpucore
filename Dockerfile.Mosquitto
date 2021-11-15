@@ -1,4 +1,4 @@
-FROM arm32v7/debian:latest
+FROM arm32v7/debian:bullseye
 MAINTAINER docker@intrepid.de
 
 env MOSQUITTOVERSION <<MOSQUITTOVERSION>>
